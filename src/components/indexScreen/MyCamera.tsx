@@ -24,6 +24,7 @@ export default class MyCamera extends React.Component<Props, State> {
   };
 
   async componentDidMount() {
+    // カメラの使用確認
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     this.setState({ hasCameraPermission: status === "granted" });
   }
@@ -49,8 +50,18 @@ export default class MyCamera extends React.Component<Props, State> {
 
   sendCloudVision = async (image: string) => {
     this.setState({ loading: true, isModalVisible: true });
-    let body = this.createRequestBody(image);
-    let response = await fetch(
+
+    const body = JSON.stringify({
+      requests: [
+        {
+          features: [{ type: "TEXT_DETECTION", maxResults: 1 }],
+          image: {
+            content: image
+          }
+        }
+      ]
+    });
+    const response = await fetch(
       "https://vision.googleapis.com/v1/images:annotate?key=" +
         Environment["GOOGLE_CLOUD_VISION_API_KEY"],
       {
@@ -63,27 +74,16 @@ export default class MyCamera extends React.Component<Props, State> {
       }
     );
     const resJson = await response.json();
+
     this.setState({
       ocrText: resJson.responses[0].textAnnotations[0].description as string,
       loading: false
     });
   };
 
-  createRequestBody = (image: string): string => {
-    return JSON.stringify({
-      requests: [
-        {
-          features: [{ type: "TEXT_DETECTION", maxResults: 1 }],
-          image: {
-            content: image
-          }
-        }
-      ]
-    });
-  };
-
   render() {
     const { hasCameraPermission } = this.state;
+
     if (hasCameraPermission === null) {
       return <View />;
     } else if (hasCameraPermission === false) {
