@@ -1,5 +1,5 @@
 import React, { createRef } from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Button, Container, Icon, Text } from "native-base";
 import { Camera } from "expo-camera";
 import * as Permissions from "expo-permissions";
@@ -90,30 +90,16 @@ export default class MyCamera extends React.Component<Props, State> {
       return <Text>No access to camera</Text>;
     } else {
       return (
-        <Container style={{ flex: 1 }}>
-          <Camera style={{ flex: 1 }} ref={this.cameraRef}>
-            <View style={{ flex: 1 }}>
+        <Container style={styles.flexOne}>
+          <Camera style={styles.flexOne} ref={this.cameraRef}>
+            <View style={styles.flexOne}>
               <Button
                 rounded
                 icon
                 onPress={this.takePicture}
-                style={{
-                  position: "absolute",
-                  bottom: 100,
-                  zIndex: 1,
-                  alignSelf: "center",
-                  height: 80,
-                  width: 80,
-                  flex: 1,
-                  justifyContent: "center"
-                }}
+                style={styles.button}
               >
-                <Icon
-                  name="camera"
-                  style={{
-                    fontSize: 50
-                  }}
-                />
+                <Icon name="camera" style={styles.icon} />
               </Button>
               <MyModal
                 toggleModal={this.toggleModal}
@@ -128,3 +114,22 @@ export default class MyCamera extends React.Component<Props, State> {
     }
   }
 }
+
+const styles = StyleSheet.create({
+  button: {
+    position: "absolute",
+    bottom: 100,
+    zIndex: 1,
+    alignSelf: "center",
+    height: 80,
+    width: 80,
+    flex: 1,
+    justifyContent: "center"
+  },
+  icon: {
+    fontSize: 50
+  },
+  flexOne: {
+    flex: 1
+  }
+});

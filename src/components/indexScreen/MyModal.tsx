@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Clipboard, ScrollView } from "react-native";
+import { View, Clipboard, ScrollView, StyleSheet } from "react-native";
 import Modal from "react-native-modal";
 import {
   Toast,
@@ -22,14 +22,14 @@ const MyModal = (props: Props) => {
   const cardContent = () => {
     if (props.loading) {
       return (
-        <CardItem style={{ justifyContent: "center" }}>
+        <CardItem style={styles.loadingIcon}>
           <Spinner color="blue" />
         </CardItem>
       );
     } else {
       return (
         <CardItem>
-          <ScrollView style={{ maxHeight: 300 }}>
+          <ScrollView style={styles.scrollView}>
             <Text selectable>{props.ocrText}</Text>
           </ScrollView>
         </CardItem>
@@ -52,20 +52,10 @@ const MyModal = (props: Props) => {
   return (
     <View style={{ flex: 1 }}>
       <Modal isVisible={props.isModalVisible}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center"
-          }}
-        >
-          <Card style={{ zIndex: 1 }}>
+        <View style={styles.wrapperView}>
+          <Card style={styles.card}>
             {cardContent()}
-            <CardItem
-              style={{
-                flexDirection: "column"
-              }}
-            >
+            <CardItem style={styles.buttonWrapper}>
               <Button onPress={copyText} block iconLeft>
                 <Icon name="copy" />
                 <Text>copy text</Text>
@@ -77,5 +67,25 @@ const MyModal = (props: Props) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  wrapperView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  loadingIcon: {
+    justifyContent: "center"
+  },
+  scrollView: {
+    maxHeight: 300
+  },
+  buttonWrapper: {
+    flexDirection: "column"
+  },
+  card: {
+    zIndex: 1
+  }
+});
 
 export default MyModal;
