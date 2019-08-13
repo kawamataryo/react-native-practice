@@ -4,14 +4,16 @@ import {Button, Icon, Text, Card, CardItem, Content, Container} from 'native-bas
 import {Camera} from 'expo-camera';
 import * as Permissions from 'expo-permissions';
 import Environment from "../../../config/enviroment";
+import MyPhotoModal from "./MyPhotoModal";
 
-interface Props {
+type Props = {
 }
 
-interface State {
-  hasCameraPermission: boolean,
-  photoUri: string,
-  ocrText: string,
+type State = {
+  hasCameraPermission: boolean
+  photoUri: string;
+  ocrText: string;
+  isModalVisible: boolean;
 }
 
 export default class MyCamera extends React.Component<Props, State> {
@@ -19,6 +21,7 @@ export default class MyCamera extends React.Component<Props, State> {
     hasCameraPermission: null,
     photoUri: '',
     ocrText: '',
+    isModalVisible: false,
   };
 
   async componentDidMount() {
@@ -26,7 +29,11 @@ export default class MyCamera extends React.Component<Props, State> {
     this.setState({hasCameraPermission: status === 'granted'});
   }
 
-  private cameraRef = createRef<Camera>()
+  private cameraRef = createRef<Camera>();
+
+  toggleModal = () => {
+    this.setState({ isModalVisible: !this.state.isModalVisible })
+  }
 
   snap = async () => {
     if (this.cameraRef) {
@@ -105,6 +112,10 @@ export default class MyCamera extends React.Component<Props, State> {
                 </CardItem>
               </Card>
             </Content>
+            <Button onPress={this.toggleModal} block iconLeft style={{flex: 0.1}}>
+              <Text>show modal</Text>
+            </Button>
+            <MyPhotoModal toggleModal={this.toggleModal} isModalVisible={this.state.isModalVisible}/>
           </Container>
       );
     }
