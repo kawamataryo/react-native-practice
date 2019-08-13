@@ -3,7 +3,7 @@ import {Image, View} from 'react-native';
 import {Button, Icon, Text, Card, CardItem, Content, Container} from 'native-base';
 import {Camera} from 'expo-camera';
 import * as Permissions from 'expo-permissions';
-import Environment from "../../../config/environment";
+import Environment from "../../../config/enviroment";
 
 interface Props {
 }
