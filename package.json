@@ -1,0 +1,32 @@
+{
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "eject": "expo eject"
+  },
+  "dependencies": {
+    "@react-native-firebase/app": "^0.1.5",
+    "@types/expo": "^32.0.13",
+    "expo": "^34.0.1",
+    "expo-camera": "^6.0.0",
+    "expo-permissions": "^6.0.0",
+    "firebase": "^6.3.5",
+    "native-base": "^2.13.4",
+    "react": "16.8.3",
+    "react-base": "^0.2.0",
+    "react-dom": "^16.8.6",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-34.0.0.tar.gz",
+    "react-native-modal": "^11.3.1",
+    "react-native-web": "^0.11.4"
+  },
+  "devDependencies": {
+    "@types/react": "^16.8.23",
+    "@types/react-native": "^0.57.65",
+    "babel-preset-expo": "^6.0.0",
+    "typescript": "^3.4.5"
+  },
+  "private": true
+}
