@@ -1,27 +1,26 @@
 import React, {createRef} from 'react';
-import {Image, View} from 'react-native';
-import {Button, Icon, Text, Card, CardItem, Content, Container} from 'native-base';
+import {View} from 'react-native';
+import {Button, Container, Icon, Text} from 'native-base';
 import {Camera} from 'expo-camera';
 import * as Permissions from 'expo-permissions';
 import Environment from "../../../config/enviroment";
-import MyPhotoModal from "./MyPhotoModal";
+import MyModal from "./MyModal";
 
-type Props = {
-}
+type Props = {}
 
 type State = {
   hasCameraPermission: boolean
-  photoUri: string;
   ocrText: string;
   isModalVisible: boolean;
+  loading: boolean;
 }
 
 export default class MyCamera extends React.Component<Props, State> {
   state = {
     hasCameraPermission: null,
-    photoUri: '',
     ocrText: '',
     isModalVisible: false,
+    loading: false,
   };
 
   async componentDidMount() {
@@ -32,18 +31,22 @@ export default class MyCamera extends React.Component<Props, State> {
   private cameraRef = createRef<Camera>();
 
   toggleModal = () => {
-    this.setState({ isModalVisible: !this.state.isModalVisible })
-  }
+    this.setState({isModalVisible: !this.state.isModalVisible, ocrText: ''})
+  };
 
-  snap = async () => {
+  takePicture = async () => {
     if (this.cameraRef) {
+      // modalの表示
+      this.toggleModal();
+      // 撮影
       let photo = await this.cameraRef.current.takePictureAsync({base64: true});
-      this.setState({photoUri: photo.uri});
+      // cloudVisionへデータを送信
       this.sendCloudVision(photo.base64);
     }
   };
 
   sendCloudVision = async (image: string) => {
+    this.setState({loading: true, isModalVisible: true})
     let body = this.createRequestBody(image);
     let response = await fetch(
         "https://vision.googleapis.com/v1/images:annotate?key=" +
@@ -57,10 +60,11 @@ export default class MyCamera extends React.Component<Props, State> {
           body: body
         }
     );
-
-    const res = await response.json();
-    this.setState({ocrText: res.responses[0].textAnnotations[0].description as string})
-    console.log(res.responses[0].textAnnotations[0].description)
+    const resJson = await response.json();
+    this.setState({
+      ocrText: resJson.responses[0].textAnnotations[0].description as string,
+      loading: false
+    })
   };
 
   createRequestBody = (image: string): string => {
@@ -68,7 +72,7 @@ export default class MyCamera extends React.Component<Props, State> {
       requests: [
         {
           features: [
-            { type: "TEXT_DETECTION", maxResults: 1 },
+            {type: "TEXT_DETECTION", maxResults: 1},
           ],
           image: {
             content: image
@@ -90,32 +94,23 @@ export default class MyCamera extends React.Component<Props, State> {
             <Camera style={{flex: 1}}
                     ref={this.cameraRef}
             >
-              <View
-                  style={{
-                    flex: 1,
-                    backgroundColor: 'transparent',
-                    flexDirection: 'row',
-                  }}>
+              <View style={{flex: 1}}>
+                <Button rounded icon onPress={this.takePicture} style={{
+                  position: 'absolute',
+                  bottom: 100,
+                  zIndex: 1,
+                  alignSelf: 'center',
+                  height: 80,
+                  width: 80,
+                  flex: 1,
+                  justifyContent: 'center'
+                }}><Icon name='camera' style={{
+                  fontSize: 50,
+                }}/></Button>
+                <MyModal toggleModal={this.toggleModal} isModalVisible={this.state.isModalVisible}
+                         ocrText={this.state.ocrText} loading={this.state.loading}/>
               </View>
             </Camera>
-            <Button onPress={this.snap} block iconLeft style={{flex: 0.1}}>
-              <Icon name='camera'/>
-              <Text>Take Photo</Text>
-            </Button>
-            <Content>
-              <Card>
-                <CardItem cardBody>
-                  <Image source={{uri: this.state.photoUri}} style={{flex: 1, height: 200}}/>
-                </CardItem>
-                <CardItem>
-                  <Text>{this.state.ocrText}</Text>
-                </CardItem>
-              </Card>
-            </Content>
-            <Button onPress={this.toggleModal} block iconLeft style={{flex: 0.1}}>
-              <Text>show modal</Text>
-            </Button>
-            <MyPhotoModal toggleModal={this.toggleModal} isModalVisible={this.state.isModalVisible}/>
           </Container>
       );
     }
