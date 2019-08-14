@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Button, Container, Icon, Text } from "native-base";
 import { Camera } from "expo-camera";
 import * as Permissions from "expo-permissions";
-import Environment from "../../../config/enviroment";
+import Environment from "../../../config/environment";
 import MyModal from "./MyModal";
 
 interface Props {}
