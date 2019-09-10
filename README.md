@@ -1,5 +1,5 @@
 # React NativeとCloud Visionで作るOCRアプリ
-こちらのQiitaで紹介したものです。
+[こちら](https://qiita.com/ryo2132/items/80536b6ea4ed9f1e8a08) のQiitaで紹介したものです。
 
 # Cloud Visionの設定
 
